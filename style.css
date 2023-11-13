@@ -1,0 +1,17 @@
+/* Gaya untuk elemen h1 (judul) */
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+/* Gaya untuk tabel */
+table {
+    margin: 0 auto; /* Membuat tabel menjadi berada di tengah halaman */
+    border-collapse: collapse;
+}
+
+/* Gaya untuk sel data dalam tabel */
+td {
+    border: 1px solid #333;
+    padding: 10px;
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Cmpatible" content="IE=edge">
+    <meta name="viewport" content="width-device-width, initial-scale-1.0">
+    <meta name="theme-color" content="f8fcfa"/>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <title>Document</title>
+</head>
+<body>
+    <h1 align="center"> Biodata Diri</h1>
+    <hr width="600px">
+    <table align="center" cellpadding="10px" width="600px">
+        <tr>
+            <td>NAMA</td>
+            <td>:   Bagas saputra awaludin</td>
+            <td rowspan="10"><img src="foto1.jpg" height="200px" width="170"></td>
+        </tr>
+        <tr>
+            <td>NIM</td>
+            <td>:   20185003</td>
+        </tr>
+        <tr>
+            <td>KELAS</td>
+            <td>:TI</td>
+        </tr>
+        <tr>
+            <td>SEMESTER</td>
+            <td>:   7 (TUJUH)</td>
+        </tr>
+        <tr>
+            <td>MATA KULIAH</td>
+            <td>:   Cloud & Mobile Programming</td>
+        </tr>
+        <tr>
+            <td>TUJUAN BELAJAR PWA</td>
+            <td>:   Untuk memahami lebih dalam apa itu PWA</td>
+        </tr>
+    </table>
+
+    <h2>Formulir Komentar</h2>
+    <form id="comment-form">
+        <label for="name">Nama:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="comment">Komentar:</label><br>
+        <textarea id="comment" name="comment" required></textarea><br><br>
+        
+        <button type="submit">Submit Komentar</button>
+    </form>
+    
+    <h2>Komentar</h2>
+    <ul id="comment-list"></ul>
+
+    <script>
+        window.addEventListener("load", () => {
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("sw.js");
+            }
+
+            // Buat atau buka IndexedDB
+            const request = window.indexedDB.open("KomentarDB", 1);
+            let db;
+
+            request.onupgradeneeded = function (event) {
+                db = event.target.result;
+                const objectStore = db.createObjectStore("comments", { keyPath: "id", autoIncrement: true });
+                objectStore.createIndex("name", "name", { unique: false });
+                objectStore.createIndex("comment", "comment", { unique: false });
+            };
+
+            request.onsuccess = function (event) {
+                db = event.target.result;
+            };
+
+            document.getElementById("comment-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const name = document.getElementById("name").value;
+                const comment = document.getElementById("comment").value;
+
+                const transaction = db.transaction("comments", "readwrite");
+                const objectStore = transaction.objectStore("comments");
+
+                const newComment = {
+                    name: name,
+                    comment: comment,
+                };
+
+                const request = objectStore.add(newComment);
+
+                request.onsuccess = function () {
+                    console.log("Komentar berhasil disimpan.");
+                    // Tambahkan komentar ke daftar komentar
+                    displayComments();
+                };
+
+                request.onerror = function (error) {
+                    console.error("Komentar gagal disimpan: ", error);
+                };
+            });
+
+            function displayComments() {
+                const objectStore = db.transaction("comments").objectStore("comments");
+                const commentList = document.getElementById("comment-list");
+
+                objectStore.openCursor().onsuccess = function (event) {
+                    const cursor = event.target.result;
+
+                    if (cursor) {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `<strong>${cursor.value.name}:</strong> ${cursor.value.comment}`;
+                        commentList.appendChild(listItem);
+                        cursor.continue();
+                    }
+                };
+            }
+        });
+    </script>
+
+
+    <script>window.addEventListener("load",()=>{
+        if("serviceWorker" in navigator){
+            navigator.serviceWorker.register("sw.js")
+        }
+    })
+    </script>
+    
+</body>
+</html>

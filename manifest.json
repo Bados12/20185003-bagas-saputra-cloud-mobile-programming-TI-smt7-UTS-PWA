@@ -1,0 +1,14 @@
+{
+    "name" : "Biodata Saya",
+    "start_url":".",
+    "display":"standalone",
+    "theme_color":"#f8fcfa",
+    "background_color":"f8fcfa",
+    "icons":[
+        {"src":"icons/pwa.png",
+        "type":"image.png",
+        "sizes":"512x512"
+        }
+        
+    ]
+}
